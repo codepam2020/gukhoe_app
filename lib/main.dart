@@ -11,11 +11,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return MaterialApp(
       theme: ThemeData(
           appBarTheme: const AppBarTheme(
-              systemOverlayStyle:
-                  SystemUiOverlayStyle(statusBarColor: Colors.transparent))),
+              systemOverlayStyle: SystemUiOverlayStyle.dark,
+              color: Colors.transparent,
+              elevation: 0)),
       debugShowCheckedModeBanner: false,
       title: 'Guk Hoe App',
       home: const SplashScreen(),

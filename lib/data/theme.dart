@@ -8,4 +8,6 @@ class theme {
   static const double page_title_box_height = 80;
   static const TextStyle page_title_text =
       TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
+  static const TextStyle button_text =
+      TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold);
 }

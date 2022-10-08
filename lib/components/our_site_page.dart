@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import '../data/theme.dart';
@@ -23,14 +24,23 @@ class _OurSitePageState extends State<OurSitePage> {
         desiredAccuracy: LocationAccuracy.high);
     print(position);
     setState(() {
-      location = position.latitude.toString();
+      location = position.toString();
     });
   }
+
+  final textController = TextEditingController();
+
+  Future clickMyLocation() async {
+    getLocation();
+    log(location.toString());
+  }
+
+  final testList = <Text>[Text('choco1'), Text('choco2'), Text('choco3')];
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-        padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
+        padding: const EdgeInsets.fromLTRB(15, 0, 10, 15),
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -47,11 +57,56 @@ class _OurSitePageState extends State<OurSitePage> {
                 ),
               ),
               const SizedBox(
-                height: 10,
+                height: 5,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [Container],
+                children: [
+                  // 내 위치찾기 버튼
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: theme.main_color,
+                    ),
+                    onPressed: clickMyLocation,
+                    child: const SizedBox(
+                      width: 100,
+                      height: 40,
+                      child: Center(
+                          child: Text(
+                        '내 위치로 찾기',
+                        style: theme.button_text,
+                      )),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  //
+                  SizedBox(
+                    height: 50,
+                    child: TextField(
+                      style: const TextStyle(fontSize: 14),
+                      decoration: const InputDecoration(
+                          label: Text('지역 입력'),
+                          hintText: '지역을 입력하세요',
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: theme.main_color, width: 2))),
+                      controller: textController,
+                      onChanged: (text) {
+                        log('현재 텍스트 => $text');
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Column(
+                    children: testList,
+                  )
+                ],
               )
             ],
           )
