@@ -55,9 +55,24 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
+  assets:
+    - seoul_gukhoe.json
+    - busan_gukhoe.json
+    - chungbuk_gukhoe.json
+    - chungnam_gukhoe.json
+    - daegu_gukhoe.json
+    - gangwon_gukhoe.json
+    - gwangju_gukhoe.json
+    - gyeongbuk_gukhoe.json
+    - gyeonggi_gukhoe.json
+    - gyeongnam_gukhoe.json
+    - incheon_gukhoe.json
+    - jeju_gukhoe.json
+    - jeonbuk_gukhoe.json
+    - jeonnam_gukhoe.json
+    - seoul_gukhoe.json
+    - ulsan_gukhoe.json
+
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:

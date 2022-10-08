@@ -29,28 +29,32 @@ class _OurSitePageState extends State<OurSitePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+    return ListView(
+        padding: const EdgeInsets.fromLTRB(10, 30, 10, 10),
         children: [
-          SizedBox(
-            height: theme.page_title_box_height,
-            child: Row(
-              children: const <Widget>[
-                Text(
-                  '내 지역 국회의원',
-                  style: theme.page_title_text,
-                )
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Column()
-        ],
-      ),
-    );
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: theme.page_title_box_height,
+                child: Row(
+                  children: const <Widget>[
+                    Text(
+                      '내 지역 국회의원',
+                      style: theme.page_title_text,
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [Container],
+              )
+            ],
+          )
+        ]);
   }
 }
