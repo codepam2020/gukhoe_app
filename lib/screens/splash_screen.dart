@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:transition/transition.dart';
 import 'package:flutter/material.dart';
 import 'package:gukhoe_app/data/theme.dart';
@@ -34,11 +33,6 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.dark),
       ),
       backgroundColor: theme.main_color,
       body: const Center(
