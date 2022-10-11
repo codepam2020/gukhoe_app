@@ -24,7 +24,6 @@ class _MainScreenState extends State<MainScreen> {
       initialIndex: 0,
       length: 3,
       child: Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(color: Colors.white, boxShadow: [
             BoxShadow(

@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:gukhoe_app/screens/our_site_detailed_screen.dart';
+import 'package:gukhoe_app/utils/show_alarm.dart';
 import 'package:http/http.dart' as http;
 import '../data/theme.dart';
+import '../utils/get_map_data.dart';
 
 class OurSitePage extends StatefulWidget {
   const OurSitePage({super.key});
@@ -16,13 +17,30 @@ class OurSitePage extends StatefulWidget {
 class _OurSitePageState extends State<OurSitePage> {
   String? address;
   List<String> addressList = ['choco1', 'choco2', 'choco3'];
-  var selectedCityNameDosi;
-  var selectedCityNameSiGuGun;
+  var selectedCityName1;
+  var selectedCityName2;
   // textfield controller
   final textController = TextEditingController();
 
-  final List<String> cityNameDosiList = ['서울시', '경기도', '강원도', '부산시'];
-  final List<String> cityNameSigugunList = [
+  final List<String> cityNameList1 = [
+    '서울특별시',
+    '인천광역시',
+    '부산광역시',
+    '대구광역시',
+    '울산광역시',
+    '광주광역시',
+    '제주특별자치도',
+    '세종특별자치시',
+    '경기도',
+    '강원도',
+    '충청북도',
+    '충청남도',
+    '경상북도',
+    '경상남도',
+    '전라북도',
+    '전라남도'
+  ];
+  final List<String> cityNameList2 = [
     '달서구',
     '달성군',
     '북구',
@@ -45,51 +63,15 @@ class _OurSitePageState extends State<OurSitePage> {
     Navigator.of(context).pop();
   }
 
-// 위도, 경도 데이터 얻기 get Geocode
-  Future getGeocode() async {
-    await Geolocator.requestPermission();
-    var position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-
-    return "${position.longitude},${position.latitude}";
-  }
-
-// 위도, 경도를 지역이름으로 변환 ReverseGeocode
-  Future getReverseGeocode(String geocode) async {
-    Map<String, String> header = {
-      "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
-      "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
-    };
-    Uri uri = Uri.parse(
-        'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$geocode&output=json');
-    final response = await http.get(uri, headers: header);
-    String? location =
-        "${json.decode(response.body)['results'][0]['region']['area1']['name']} ${json.decode(response.body)['results'][0]['region']['area2']['name']} ${json.decode(response.body)['results'][0]['region']['area3']['name']}";
-
-    setState(() {
-      address = location;
-      addressList = [location];
-    });
-  }
-
 // 내 위치찾기 버튼 클릭
   Future clickMyLocationButton() async {
-    var geocode = await getGeocode();
-    await getReverseGeocode(geocode);
-  }
-
-  void showAlarm(String title, String content) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(onPressed: clickCancel, child: const Text('확인')),
-            ],
-          );
-        });
+    var geocode = await MapData.getGeocode(context);
+    var location = await MapData.getReverseGeocode(geocode);
+    setState(() {
+      // address = location;
+      // addressList = <String>[location];
+    });
+    showAlarm(context, '위치 확인', location);
   }
 
   // 국회의원 리스트 중 하나 클릭
@@ -102,7 +84,7 @@ class _OurSitePageState extends State<OurSitePage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        padding: const EdgeInsets.fromLTRB(15, 0, 10, 15),
+        padding: const EdgeInsets.fromLTRB(15, 20, 10, 15),
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -170,10 +152,11 @@ class _OurSitePageState extends State<OurSitePage> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.7,
                     child: DropdownButton(
+                        menuMaxHeight: MediaQuery.of(context).size.height * 0.3,
                         hint: const Text('도 및 시를 선택하세요'),
                         isExpanded: true,
-                        value: selectedCityNameDosi,
-                        items: cityNameDosiList.map((value) {
+                        value: selectedCityName1,
+                        items: cityNameList1.map((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value),
@@ -181,7 +164,7 @@ class _OurSitePageState extends State<OurSitePage> {
                         }).toList(),
                         onChanged: (value) {
                           setState(() {
-                            selectedCityNameDosi = value!;
+                            selectedCityName1 = value!;
                           });
                         }),
                   ),
@@ -193,18 +176,18 @@ class _OurSitePageState extends State<OurSitePage> {
                     child: DropdownButton(
                         hint: const Text('지역을 선택하세요'),
                         isExpanded: true,
-                        value: selectedCityNameSiGuGun,
-                        items: cityNameSigugunList.map((value) {
+                        value: selectedCityName2,
+                        items: cityNameList2.map((value) {
                           return DropdownMenuItem(
                             value: value,
                             child: Text(value),
                           );
                         }).toList(),
-                        onChanged: selectedCityNameDosi == null
+                        onChanged: selectedCityName1 == null
                             ? null
                             : (value) {
                                 setState(() {
-                                  selectedCityNameSiGuGun = value!;
+                                  selectedCityName2 = value!;
                                 });
                               }),
                   ),
