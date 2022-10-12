@@ -4,6 +4,16 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class MapData {
+  static Map<String, String> reverseGeocodingHeader = {
+    "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
+    "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
+  };
+
+  static Map<String, String> geocodingHeader = {
+    "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
+    "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
+  };
+
   // 현재 위치 경도,위도 데이터 얻기
   static Future getGeocode(context) async {
     var enable = await Geolocator.isLocationServiceEnabled();
@@ -12,6 +22,9 @@ class MapData {
     if (enable) {
       if (permission == LocationPermission.denied) {
         Geolocator.requestPermission();
+        var position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        return "${position.longitude},${position.latitude}";
       } else {
         var position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
@@ -22,18 +35,27 @@ class MapData {
     }
   }
 
+  // Geocode에 대한 주소 데이터 얻기
   static Future getReverseGeocode(String geocode) async {
-    Map<String, String> header = {
-      "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
-      "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
-    };
     Uri uri = Uri.parse(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$geocode&output=json');
-    final response = await http.get(uri, headers: header);
+    final response = await http.get(uri, headers: reverseGeocodingHeader);
 
     String? location =
         "${json.decode(response.body)['results'][0]['region']['area1']['name']} ${json.decode(response.body)['results'][0]['region']['area2']['name']} ${json.decode(response.body)['results'][0]['region']['area3']['name']}";
 
     return location;
+  }
+
+  // 지역이름 검색시 해당 주소 데이터 얻기
+  static Future getLocationInfo(String cityName) async {
+    Uri uri = Uri.parse(
+        "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=$cityName");
+
+    final response = await http.get(uri, headers: geocodingHeader);
+
+    var data = json.decode(response.body)['addresses'][0]['addressElements'];
+
+    return data;
   }
 }

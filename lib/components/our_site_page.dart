@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:gukhoe_app/data/city_names.dart';
 import 'package:gukhoe_app/screens/our_site_detailed_screen.dart';
 import 'package:gukhoe_app/utils/show_alarm.dart';
 import 'package:http/http.dart' as http;
@@ -19,36 +20,9 @@ class _OurSitePageState extends State<OurSitePage> {
   List<String> addressList = ['choco1', 'choco2', 'choco3'];
   var selectedCityName1;
   var selectedCityName2;
+  var textFieldText = '';
   // textfield controller
   final textController = TextEditingController();
-
-  final List<String> cityNameList1 = [
-    '서울특별시',
-    '인천광역시',
-    '부산광역시',
-    '대구광역시',
-    '울산광역시',
-    '광주광역시',
-    '제주특별자치도',
-    '세종특별자치시',
-    '경기도',
-    '강원도',
-    '충청북도',
-    '충청남도',
-    '경상북도',
-    '경상남도',
-    '전라북도',
-    '전라남도'
-  ];
-  final List<String> cityNameList2 = [
-    '달서구',
-    '달성군',
-    '북구',
-    '중구',
-    '수성구',
-    '동구',
-    '남구'
-  ];
 
   // 시작시 함수
   @override
@@ -74,6 +48,14 @@ class _OurSitePageState extends State<OurSitePage> {
     showAlarm(context, '위치 확인', location);
   }
 
+  // 검색 버튼 클릭
+  Future clickSearchButton() async {
+    var cityInfo = await MapData.getLocationInfo(textFieldText);
+    for (var i = 0; i < 4; i++) {
+      print(cityInfo[i]['longName']);
+    }
+  }
+
   // 국회의원 리스트 중 하나 클릭
   void clickCityName(String name) {
     Navigator.of(context).push(MaterialPageRoute(
@@ -94,7 +76,7 @@ class _OurSitePageState extends State<OurSitePage> {
                 child: Row(
                   children: const <Widget>[
                     Text(
-                      '내 지역 국회의원',
+                      '우리 지역 국회의원',
                       style: theme.page_title_text,
                     )
                   ],
@@ -127,70 +109,80 @@ class _OurSitePageState extends State<OurSitePage> {
                     height: 10,
                   ),
 
-                  // TextField
-                  // SizedBox(
-                  //   height: 60,
-                  //   child: TextField(
-                  //     style: const TextStyle(fontSize: 18),
-                  //     decoration: const InputDecoration(
-                  //         label: Text('지역 입력'),
-                  //         hintText: '지역을 입력하세요',
-                  //         border: OutlineInputBorder(),
-                  //         focusedBorder: OutlineInputBorder(
-                  //             borderSide: BorderSide(
-                  //                 color: theme.main_color, width: 2))),
-                  //     controller: textController,
-                  //     onChanged: (text) {
-                  //       log('현재 텍스트 => $text');
-                  //     },
-                  //   ),
-                  // ),
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
+                  // 도시 검색 Text field
 
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: DropdownButton(
-                        menuMaxHeight: MediaQuery.of(context).size.height * 0.3,
-                        hint: const Text('도 및 시를 선택하세요'),
-                        isExpanded: true,
-                        value: selectedCityName1,
-                        items: cityNameList1.map((value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedCityName1 = value!;
-                          });
-                        }),
+                    height: 60,
+                    child: TextField(
+                      style: const TextStyle(fontSize: 18),
+                      decoration: InputDecoration(
+                          suffix: IconButton(
+                              onPressed: clickSearchButton,
+                              icon: const Icon(
+                                Icons.search,
+                                size: 25,
+                              )),
+                          label: const Text('지역 입력'),
+                          hintText: '지역을 입력하세요',
+                          border: const OutlineInputBorder(),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: theme.main_color, width: 2))),
+                      controller: textController,
+                      textInputAction: TextInputAction.done,
+                      onChanged: (text) {
+                        setState(() {
+                          textFieldText = text;
+                        });
+                      },
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: DropdownButton(
-                        hint: const Text('지역을 선택하세요'),
-                        isExpanded: true,
-                        value: selectedCityName2,
-                        items: cityNameList2.map((value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: selectedCityName1 == null
-                            ? null
-                            : (value) {
-                                setState(() {
-                                  selectedCityName2 = value!;
-                                });
-                              }),
-                  ),
+
+                  // SizedBox(
+                  //   width: MediaQuery.of(context).size.width * 0.7,
+                  //   child: DropdownButton(
+                  //       menuMaxHeight: MediaQuery.of(context).size.height * 0.3,
+                  //       hint: const Text('도 및 시를 선택하세요'),
+                  //       isExpanded: true,
+                  //       value: selectedCityName1,
+                  //       items: CityNames.cityNameList1.map((value) {
+                  //         return DropdownMenuItem(
+                  //           value: value,
+                  //           child: Text(value),
+                  //         );
+                  //       }).toList(),
+                  //       onChanged: (value) {
+                  //         setState(() {
+                  //           selectedCityName1 = value!;
+                  //         });
+                  //       }),
+                  // ),
+                  // const SizedBox(
+                  //   height: 20,
+                  // ),
+                  // SizedBox(
+                  //   width: MediaQuery.of(context).size.width * 0.7,
+                  //   child: DropdownButton(
+                  //       hint: const Text('지역을 선택하세요'),
+                  //       isExpanded: true,
+                  //       value: selectedCityName2,
+                  //       items: cityNameList2.map((value) {
+                  //         return DropdownMenuItem(
+                  //           value: value,
+                  //           child: Text(value),
+                  //         );
+                  //       }).toList(),
+                  //       onChanged: selectedCityName1 == null
+                  //           ? null
+                  //           : (value) {
+                  //               setState(() {
+                  //                 selectedCityName2 = value!;
+                  //               });
+                  //             }),
+                  // ),
 
                   // 지역 리스트
                   Container(
