@@ -1,19 +1,10 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:gukhoe_app/utils/show_alarm.dart';
 import 'package:http/http.dart' as http;
+import '../data/private_data.dart';
 import 'dart:convert';
 
 class MapData {
-  static Map<String, String> reverseGeocodingHeader = {
-    "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
-    "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
-  };
-
-  static Map<String, String> geocodingHeader = {
-    "X-NCP-APIGW-API-KEY-ID": "n9bs1u3zhk",
-    "X-NCP-APIGW-API-KEY": "kJviXEU5xFY133CkYr0xTz16GGeY7GWE1sR2pwjn"
-  };
-
   // 현재 위치 경도,위도 데이터 얻기
   static Future getGeocode(context) async {
     var enable = await Geolocator.isLocationServiceEnabled();
@@ -39,7 +30,7 @@ class MapData {
   static Future getReverseGeocode(String geocode) async {
     Uri uri = Uri.parse(
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$geocode&output=json');
-    final response = await http.get(uri, headers: reverseGeocodingHeader);
+    final response = await http.get(uri, headers: Private.naverHeader);
 
     String? location =
         "${json.decode(response.body)['results'][0]['region']['area1']['name']} ${json.decode(response.body)['results'][0]['region']['area2']['name']} ${json.decode(response.body)['results'][0]['region']['area3']['name']}";
@@ -52,7 +43,7 @@ class MapData {
     Uri uri = Uri.parse(
         "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=$cityName");
 
-    final response = await http.get(uri, headers: geocodingHeader);
+    final response = await http.get(uri, headers: Private.naverHeader);
 
     var data = json.decode(response.body)['addresses'][0]['addressElements'];
 
