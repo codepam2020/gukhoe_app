@@ -32,8 +32,8 @@ class MapData {
         'https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=$geocode&output=json');
     final response = await http.get(uri, headers: Private.naverHeader);
 
-    String? location =
-        "${json.decode(response.body)['results'][0]['region']['area1']['name']} ${json.decode(response.body)['results'][0]['region']['area2']['name']} ${json.decode(response.body)['results'][0]['region']['area3']['name']}";
+    final location = json.decode(response.body)['results'][0]['region'];
+    // "${json.decode(response.body)['results'][0]['region']['area1']['name']} ${json.decode(response.body)['results'][0]['region']['area2']['name']} ${json.decode(response.body)['results'][0]['region']['area3']['name']}";
 
     return location;
   }
@@ -41,11 +41,11 @@ class MapData {
   // 지역이름 검색시 해당 주소 데이터 얻기
   static Future getLocationInfo(String cityName) async {
     Uri uri = Uri.parse(
-        "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=$cityName");
+        "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?count=100&query=$cityName");
 
     final response = await http.get(uri, headers: Private.naverHeader);
 
-    var data = json.decode(response.body)['addresses'][0]['addressElements'];
+    var data = json.decode(response.body)['addresses'];
 
     return data;
   }

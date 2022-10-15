@@ -1,10 +1,8 @@
-import 'dart:convert';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:gukhoe_app/data/city_names.dart';
 import 'package:gukhoe_app/screens/our_site_detailed_screen.dart';
 import 'package:gukhoe_app/utils/show_alarm.dart';
-import 'package:http/http.dart' as http;
 import '../data/theme.dart';
 import '../utils/get_map_data.dart';
 
@@ -18,6 +16,7 @@ class OurSitePage extends StatefulWidget {
 class _OurSitePageState extends State<OurSitePage> {
   String? address;
   List<String> addressList = ['choco1', 'choco2', 'choco3'];
+  List<dynamic>? cityList;
   var selectedCityName1;
   var selectedCityName2;
   var textFieldText = '';
@@ -42,17 +41,31 @@ class _OurSitePageState extends State<OurSitePage> {
     var geocode = await MapData.getGeocode(context);
     var location = await MapData.getReverseGeocode(geocode);
     setState(() {
-      // address = location;
-      // addressList = <String>[location];
+      setState(() {
+        cityList = [location['area1']['name'].toString()];
+      });
     });
-    showAlarm(context, '위치 확인', location);
+    print(location);
   }
 
-  // 검색 버튼 클릭
+  // 지역 검색 버튼 클릭
   Future clickSearchButton() async {
-    var cityInfo = await MapData.getLocationInfo(textFieldText);
-    for (var i = 0; i < 4; i++) {
-      print(cityInfo[i]['longName']);
+    if (textFieldText == "") {
+      showAlarm(context, '', '검색어를 입력하세요');
+    } else {
+      try {
+        var res = await MapData.getLocationInfo(textFieldText);
+        // var area1 = cityInfo[0]['longName'];
+        // var area2 = cityInfo[1]['longName'];
+        // var area3 = cityInfo[2]['longName'];
+        // var area4 = cityInfo[3]['longName'];
+        // showAlarm(context, '$area1 $area2 $area3 $area4', "");
+        setState(() {
+          cityList = res;
+        });
+      } catch (e) {
+        showAlarm(context, "에러", '지역이름을 바르게 입력하세요');
+      }
     }
   }
 
@@ -110,7 +123,6 @@ class _OurSitePageState extends State<OurSitePage> {
                   ),
 
                   // 도시 검색 Text field
-
                   SizedBox(
                     height: 60,
                     child: TextField(
@@ -141,74 +153,37 @@ class _OurSitePageState extends State<OurSitePage> {
                     height: 20,
                   ),
 
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * 0.7,
-                  //   child: DropdownButton(
-                  //       menuMaxHeight: MediaQuery.of(context).size.height * 0.3,
-                  //       hint: const Text('도 및 시를 선택하세요'),
-                  //       isExpanded: true,
-                  //       value: selectedCityName1,
-                  //       items: CityNames.cityNameList1.map((value) {
-                  //         return DropdownMenuItem(
-                  //           value: value,
-                  //           child: Text(value),
-                  //         );
-                  //       }).toList(),
-                  //       onChanged: (value) {
-                  //         setState(() {
-                  //           selectedCityName1 = value!;
-                  //         });
-                  //       }),
-                  // ),
-                  // const SizedBox(
-                  //   height: 20,
-                  // ),
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * 0.7,
-                  //   child: DropdownButton(
-                  //       hint: const Text('지역을 선택하세요'),
-                  //       isExpanded: true,
-                  //       value: selectedCityName2,
-                  //       items: cityNameList2.map((value) {
-                  //         return DropdownMenuItem(
-                  //           value: value,
-                  //           child: Text(value),
-                  //         );
-                  //       }).toList(),
-                  //       onChanged: selectedCityName1 == null
-                  //           ? null
-                  //           : (value) {
-                  //               setState(() {
-                  //                 selectedCityName2 = value!;
-                  //               });
-                  //             }),
-                  // ),
-
                   // 지역 리스트
                   Container(
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: addressList
-                            .map((cityName) => SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(10),
-                                    onTap: () {
-                                      clickCityName(cityName);
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 8, 0, 8),
-                                      child: Text(
-                                        cityName,
-                                        style: theme.gukhoe_list_text,
+                    child: cityList == null
+                        ? const SizedBox()
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: cityList!
+                                .map((cityName) => SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const OurSiteDetailedScreen(
+                                                          name: '123')));
+                                        },
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 8, 0, 8),
+                                          child: Text(
+                                            "${cityName['addressElements'][0]['longName']} ${cityName['addressElements'][1]['longName']} ${cityName['addressElements'][2]['longName']} ${cityName['addressElements'][3]['longName']}",
+                                            style: theme.gukhoe_list_text,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ))
-                            .toList()),
+                                    ))
+                                .toList()),
                   )
                 ],
               )
