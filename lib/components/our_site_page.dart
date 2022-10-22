@@ -42,7 +42,7 @@ class _OurSitePageState extends State<OurSitePage> {
     var location = await MapData.getReverseGeocode(geocode);
     setState(() {
       setState(() {
-        cityList = [location['area1']['name'].toString()];
+        cityList = [location];
       });
     });
     print(location);
@@ -177,7 +177,7 @@ class _OurSitePageState extends State<OurSitePage> {
                                           padding: const EdgeInsets.fromLTRB(
                                               10, 8, 0, 8),
                                           child: Text(
-                                            "${cityName['addressElements'][0]['longName']} ${cityName['addressElements'][1]['longName']} ${cityName['addressElements'][2]['longName']} ${cityName['addressElements'][3]['longName']}",
+                                            "${cityName['area1']['name']} ${cityName['area2']['name']} ${cityName['area3']['name']}",
                                             style: theme.gukhoe_list_text,
                                           ),
                                         ),
