@@ -36,7 +36,7 @@ class _OurSitePageState extends State<OurSitePage> {
     Navigator.of(context).pop();
   }
 
-// 내 위치찾기 버튼 클릭
+// 내 위치로 찾기 버튼 클릭
   Future clickMyLocationButton() async {
     var geocode = await MapData.getGeocode(context);
     var location = await MapData.getReverseGeocode(geocode);
@@ -55,11 +55,6 @@ class _OurSitePageState extends State<OurSitePage> {
     } else {
       try {
         var res = await MapData.getLocationInfo(textFieldText);
-        // var area1 = cityInfo[0]['longName'];
-        // var area2 = cityInfo[1]['longName'];
-        // var area3 = cityInfo[2]['longName'];
-        // var area4 = cityInfo[3]['longName'];
-        // showAlarm(context, '$area1 $area2 $area3 $area4', "");
         setState(() {
           cityList = res;
         });
@@ -142,6 +137,9 @@ class _OurSitePageState extends State<OurSitePage> {
                                   color: theme.main_color, width: 2))),
                       controller: textController,
                       textInputAction: TextInputAction.done,
+                      onSubmitted: (text) {
+                        clickSearchButton();
+                      },
                       onChanged: (text) {
                         setState(() {
                           textFieldText = text;
