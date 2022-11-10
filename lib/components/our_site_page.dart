@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gukhoe_app/screens/our_site_detailed_screen.dart';
+import 'package:gukhoe_app/utils/get_constituency.dart';
 import 'package:gukhoe_app/utils/show_alarm.dart';
 import '../data/theme.dart';
 import '../utils/get_map_data.dart';
@@ -17,8 +18,6 @@ class _OurSitePageState extends State<OurSitePage> {
   String? address;
   List<String> addressList = ['choco1', 'choco2', 'choco3'];
   List<dynamic>? cityList;
-  var selectedCityName1;
-  var selectedCityName2;
   var textFieldText = '';
   // textfield controller
   final textController = TextEditingController();
@@ -40,12 +39,12 @@ class _OurSitePageState extends State<OurSitePage> {
   Future clickMyLocationButton() async {
     var geocode = await MapData.getGeocode(context);
     var location = await MapData.getReverseGeocode(geocode);
+    String detailedLocation =
+        "${location['area1']['name']} ${location['area2']['name']} ${location['area3']['name']}";
     setState(() {
-      setState(() {
-        cityList = [location];
-      });
+      cityList = [detailedLocation];
     });
-    print(location);
+    (detailedLocation);
   }
 
   // 지역 검색 버튼 클릭
@@ -55,26 +54,32 @@ class _OurSitePageState extends State<OurSitePage> {
     } else {
       try {
         var res = await MapData.getLocationInfo(textFieldText);
+        List<String> locationList = [];
+        for (var i = 0; i < res.length; i++) {
+          locationList.add(res[i]['jibunAddress']);
+        }
         setState(() {
-          cityList = res;
+          cityList = locationList;
         });
+        print(locationList);
       } catch (e) {
         showAlarm(context, "에러", '지역이름을 바르게 입력하세요');
       }
     }
   }
 
-  // 국회의원 리스트 중 하나 클릭
-  void clickCityName(String name) {
+  // 도시 리스트들 중 하나 클릭 function
+  Future clickCityName(String name) async {
+    final String answer = await getConstituency("육초코");
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => OurSiteDetailedScreen(name: name),
+      builder: (context) => OurSiteDetailedScreen(name: answer),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-        padding: const EdgeInsets.fromLTRB(15, 20, 10, 15),
+        padding: const EdgeInsets.fromLTRB(15, 40, 10, 15),
         children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -164,18 +169,14 @@ class _OurSitePageState extends State<OurSitePage> {
                                       width: MediaQuery.of(context).size.width,
                                       child: InkWell(
                                         onTap: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const OurSiteDetailedScreen(
-                                                          name: '123')));
+                                          clickCityName(cityName);
                                         },
                                         borderRadius: BorderRadius.circular(10),
                                         child: Padding(
                                           padding: const EdgeInsets.fromLTRB(
                                               10, 8, 0, 8),
                                           child: Text(
-                                            "${cityName['area1']['name']} ${cityName['area2']['name']} ${cityName['area3']['name']}",
+                                            cityName,
                                             style: theme.gukhoe_list_text,
                                           ),
                                         ),
