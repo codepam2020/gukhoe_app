@@ -20,11 +20,9 @@ Future getConstituency(String location) async {
         }
         return answer;
       }
-      break;
     default:
       {
         return "Error";
       }
-      break;
   }
 }
