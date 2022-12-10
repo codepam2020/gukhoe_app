@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class SearchGukhoePage extends StatefulWidget {
   const SearchGukhoePage({super.key});
@@ -10,12 +8,32 @@ class SearchGukhoePage extends StatefulWidget {
 }
 
 class _SearchGukhoePageState extends State<SearchGukhoePage> {
+  late String name;
+
+  @override
+  void initState() {
+    super.initState();
+    name = '';
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Center(
-        child: Text(
-      'search gukhoe',
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+    return Center(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          name,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        ),
+        TextField(
+          onChanged: (value) {
+            setState(() {
+              name = value;
+            });
+          },
+        )
+      ],
     ));
   }
 }

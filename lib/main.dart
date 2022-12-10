@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
         statusBarBrightness: Brightness.dark));
     return MaterialApp(
       theme: ThemeData(
+          scaffoldBackgroundColor: const Color.fromARGB(255, 165, 165, 165),
           appBarTheme: const AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle.dark,
               color: Colors.transparent,
