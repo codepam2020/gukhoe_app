@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gukhoe_app/screens/splash_screen.dart';
+import 'package:gukhoe_app/screens/test_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
               elevation: 0)),
       debugShowCheckedModeBanner: false,
       title: 'Guk Hoe App',
-      home: const SplashScreen(),
+      home: const TestScreen(),
     );
   }
 }
