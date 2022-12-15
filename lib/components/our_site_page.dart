@@ -61,7 +61,6 @@ class _OurSitePageState extends State<OurSitePage> {
         setState(() {
           cityList = locationList;
         });
-        print(locationList);
       } catch (e) {
         showAlarm(context, "에러", '지역이름을 바르게 입력하세요');
       }
